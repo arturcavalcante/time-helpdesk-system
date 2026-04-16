@@ -35,6 +35,7 @@
             this.btnAbrir = new System.Windows.Forms.Button();
             this.lstChamados = new System.Windows.Forms.ListBox();
             this.btnResolver = new System.Windows.Forms.Button();
+            this.btnMostrarAbertos = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -97,11 +98,22 @@
             this.btnResolver.UseVisualStyleBackColor = true;
             this.btnResolver.Click += new System.EventHandler(this.btnResolver_Click);
             // 
+            // btnMostrarAbertos
+            // 
+            this.btnMostrarAbertos.Location = new System.Drawing.Point(591, 139);
+            this.btnMostrarAbertos.Name = "btnMostrarAbertos";
+            this.btnMostrarAbertos.Size = new System.Drawing.Size(102, 23);
+            this.btnMostrarAbertos.TabIndex = 7;
+            this.btnMostrarAbertos.Text = "Mostrar abertos";
+            this.btnMostrarAbertos.UseVisualStyleBackColor = true;
+            this.btnMostrarAbertos.Click += new System.EventHandler(this.btnMostrarAbertos_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnMostrarAbertos);
             this.Controls.Add(this.btnResolver);
             this.Controls.Add(this.lstChamados);
             this.Controls.Add(this.btnAbrir);
@@ -125,6 +137,7 @@
         private System.Windows.Forms.Button btnAbrir;
         private System.Windows.Forms.ListBox lstChamados;
         private System.Windows.Forms.Button btnResolver;
+        private System.Windows.Forms.Button btnMostrarAbertos;
     }
 }
 

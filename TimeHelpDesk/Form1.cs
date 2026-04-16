@@ -13,6 +13,8 @@ namespace TimeHelpDesk
     public partial class Form1 : Form
     {
         List<string> chamados = new List<string>();
+
+        bool mostrandoAbertos = false;
         public Form1()
         {
             InitializeComponent();
@@ -96,6 +98,31 @@ namespace TimeHelpDesk
         void SalvarChamados()
         {
             System.IO.File.WriteAllLines("chamados.txt", chamados);
+        }
+
+        private void btnMostrarAbertos_Click(object sender, EventArgs e)
+        {
+            mostrandoAbertos = !mostrandoAbertos;
+            lstChamados.Items.Clear();
+            if (mostrandoAbertos)
+            {
+                foreach (var chamado in chamados)
+                {
+                    if (chamado.Contains("[ABERTO]"))
+                    {
+                        lstChamados.Items.Add(chamado);
+                    }
+                }
+                btnMostrarAbertos.Text = "Mostrar Todos";
+            }
+            else
+            {
+                foreach (var chamado in chamados) 
+                {
+                    lstChamados.Items.Add(chamado);
+                }
+                btnMostrarAbertos.Text = "Mostrar Abertos";
+            }
         }
     }
 }
