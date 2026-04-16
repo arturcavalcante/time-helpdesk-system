@@ -1,0 +1,10 @@
+C:\Users\Usuario\Documents\Projetos Visual Studio\TimeHelpDesk\TimeHelpDesk\bin\Debug\TimeHelpDesk.exe.config
+C:\Users\Usuario\Documents\Projetos Visual Studio\TimeHelpDesk\TimeHelpDesk\bin\Debug\TimeHelpDesk.exe
+C:\Users\Usuario\Documents\Projetos Visual Studio\TimeHelpDesk\TimeHelpDesk\bin\Debug\TimeHelpDesk.pdb
+C:\Users\Usuario\Documents\Projetos Visual Studio\TimeHelpDesk\TimeHelpDesk\obj\Debug\TimeHelpDesk.csproj.AssemblyReference.cache
+C:\Users\Usuario\Documents\Projetos Visual Studio\TimeHelpDesk\TimeHelpDesk\obj\Debug\TimeHelpDesk.Form1.resources
+C:\Users\Usuario\Documents\Projetos Visual Studio\TimeHelpDesk\TimeHelpDesk\obj\Debug\TimeHelpDesk.Properties.Resources.resources
+C:\Users\Usuario\Documents\Projetos Visual Studio\TimeHelpDesk\TimeHelpDesk\obj\Debug\TimeHelpDesk.csproj.GenerateResource.cache
+C:\Users\Usuario\Documents\Projetos Visual Studio\TimeHelpDesk\TimeHelpDesk\obj\Debug\TimeHelpDesk.csproj.CoreCompileInputs.cache
+C:\Users\Usuario\Documents\Projetos Visual Studio\TimeHelpDesk\TimeHelpDesk\obj\Debug\TimeHelpDesk.exe
+C:\Users\Usuario\Documents\Projetos Visual Studio\TimeHelpDesk\TimeHelpDesk\obj\Debug\TimeHelpDesk.pdb
