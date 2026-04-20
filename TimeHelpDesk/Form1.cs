@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MySql.Data.MySqlClient;
 
 namespace TimeHelpDesk
 {
@@ -24,43 +26,103 @@ namespace TimeHelpDesk
 
             CarregarChamados();
         }
+        public class Chamado
+        {
+            public int Id { get; set; }
+            public string Usuario { get; set; }
+            public string Descricao { get; set; }
+            public string Status { get; set; }
+            public DateTime DataCriacao { get; set; }
+
+            public override string ToString()
+            {
+                return $"[{DataCriacao}] {Usuario}: {Descricao}";
+            }
+        }
         private void CarregarChamados()
         {
-            if (System.IO.File.Exists("chamados.txt"))
+            string connStr = "server=localhost;user=root;password=ACE$777;database=helpdesk;";
+            using (var conn = new MySqlConnection(connStr)) 
             {
-                chamados = System.IO.File.ReadAllLines("chamados.txt")
-                    .Where(c => !string.IsNullOrWhiteSpace(c))
-                    .ToList();
+                conn.Open();
 
-                foreach (var chamado in chamados)
+                string sql = @"
+                SELECT c.Id, u.Nome, c.Descricao, c.Status, c.DataCriacao
+                FROM Chamados c
+                JOIN Usuarios u ON c.UsuarioId = u.Id
+                ORDER BY c.DataCriacao DESC";
+
+                var cmd = new MySqlCommand(sql, conn);
+                var reader = cmd.ExecuteReader();
+
+                lstChamados.Items.Clear();
+
+                while (reader.Read())
                 {
-                    lstChamados.Items.Add(chamado);
+                    Chamado c = new Chamado
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        Usuario = reader["Nome"].ToString(),
+                        Descricao = reader["Descricao"].ToString(),
+                        Status = reader["Status"].ToString(),
+                        DataCriacao = Convert.ToDateTime(reader["DataCriacao"])
+                    };
+
+                    lstChamados.Items.Add(c); // 🔥 objeto, não string
                 }
             }
         }
         private void btnAbrir_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtUsuario.Text) ||
-                string.IsNullOrWhiteSpace(txtDescricao.Text))
+            if (string.IsNullOrWhiteSpace(txtDescricao.Text) || string.IsNullOrWhiteSpace(txtUsuario.Text))
             {
                 MessageBox.Show("Preencha usuário e descrição.");
                 return;
             }
 
-            string usuario = txtUsuario.Text;
-            string descricao = txtDescricao.Text;
+            string connStr = "server=localhost;user=root;password=123;database=helpdesk;";
 
-            string chamadoFormatado =
-                "[ABERTO] [" + DateTime.Now.ToString("dd/MM HH:mm") + "] " +
-                usuario + " - " + descricao;
+            using (var conn = new MySqlConnection(connStr))
+            {
+                conn.Open();
 
-            chamados.Add(chamadoFormatado);
-            lstChamados.Items.Add(chamadoFormatado);
+                // 🔹 Primeiro pega ou cria usuário
+                string getUser = "SELECT Id FROM Usuarios WHERE Nome = @nome";
+                var cmdUser = new MySqlCommand(getUser, conn);
+                cmdUser.Parameters.AddWithValue("@nome", txtUsuario.Text);
 
-            SalvarChamados();
+                object result = cmdUser.ExecuteScalar();
+                int usuarioId;
+
+                if (result == null)
+                {
+                    string insertUser = "INSERT INTO Usuarios (Nome) VALUES (@nome); SELECT LAST_INSERT_ID();";
+                    var cmdInsert = new MySqlCommand(insertUser, conn);
+                    cmdInsert.Parameters.AddWithValue("@nome", txtUsuario.Text);
+
+                    usuarioId = Convert.ToInt32(cmdInsert.ExecuteScalar());
+                }
+                else
+                {
+                    usuarioId = Convert.ToInt32(result);
+                }
+
+                // 🔹 Inserir chamado
+                string insertChamado = @"INSERT INTO Chamados 
+            (UsuarioId, Descricao, Status, DataCriacao)
+            VALUES (@u, @d, 'ABERTO', NOW())";
+
+                var cmdChamado = new MySqlCommand(insertChamado, conn);
+                cmdChamado.Parameters.AddWithValue("@u", usuarioId);
+                cmdChamado.Parameters.AddWithValue("@d", txtDescricao.Text);
+
+                cmdChamado.ExecuteNonQuery();
+            }
 
             txtDescricao.Clear();
             txtUsuario.Clear();
+
+            CarregarChamados();
         }
         private void btnResolver_Click(object sender, EventArgs e)
         {
@@ -70,30 +132,22 @@ namespace TimeHelpDesk
                 return;
             }
 
-            string chamadoSelecionado = lstChamados.SelectedItem.ToString();
+            // Aqui você precisa do ID (vamos melhorar isso depois)
+            string connStr = "server=localhost;user=root;password=123;database=helpdesk;";
 
-            string chamadoAtualizado;
+            using (var conn = new MySqlConnection(connStr))
+            {
+                conn.Open();
 
-            if (chamadoSelecionado.Contains("[ABERTO]"))
-            {
-                chamadoAtualizado = chamadoSelecionado.Replace("[ABERTO]", "[RESOLVIDO]");
-            }
-            else if (!chamadoSelecionado.Contains("[RESOLVIDO]"))
-            {
-                chamadoAtualizado = "[RESOLVIDO] " + chamadoSelecionado;
-            }
-            else
-            {
-                MessageBox.Show("Chamado já está resolvido.");
-                return;
+                string sql = "UPDATE Chamados SET Status = 'RESOLVIDO', DataFechamento = NOW() WHERE Id = @id";
+
+                var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@id", /* ID do chamado */);
+
+                cmd.ExecuteNonQuery();
             }
 
-            int index = lstChamados.SelectedIndex;
-
-            lstChamados.Items[index] = chamadoAtualizado;
-            chamados[index] = chamadoAtualizado;
-
-            SalvarChamados();
+            CarregarChamados();
         }
         void SalvarChamados()
         {
@@ -123,6 +177,11 @@ namespace TimeHelpDesk
                 }
                 btnMostrarAbertos.Text = "Mostrar Abertos";
             }
+        }
+
+        private void lstChamados_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            lstChamados.Items.Add(chamados);
         }
     }
 }

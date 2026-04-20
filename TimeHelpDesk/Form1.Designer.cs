@@ -87,6 +87,7 @@
             this.lstChamados.Name = "lstChamados";
             this.lstChamados.Size = new System.Drawing.Size(486, 108);
             this.lstChamados.TabIndex = 5;
+            this.lstChamados.SelectedIndexChanged += new System.EventHandler(this.lstChamados_SelectedIndexChanged);
             // 
             // btnResolver
             // 
