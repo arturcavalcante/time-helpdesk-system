@@ -14,8 +14,6 @@ namespace TimeHelpDesk
 {
     public partial class Form1 : Form
     {
-        List<string> chamados = new List<string>();
-
         bool mostrandoAbertos = false;
         public Form1()
         {
@@ -36,10 +34,10 @@ namespace TimeHelpDesk
 
             public override string ToString()
             {
-                return $"[{DataCriacao}] {Usuario}: {Descricao}";
+                return $"[{DataCriacao}] {Status}: {Usuario}: {Descricao}";
             }
         }
-        private void CarregarChamados()
+        private void CarregarChamados(bool apenasAbertos = false)
         {
             string connStr = "server=localhost;user=root;password=ACE$777;database=helpdesk;";
             using (var conn = new MySqlConnection(connStr)) 
@@ -50,6 +48,7 @@ namespace TimeHelpDesk
                 SELECT c.Id, u.Nome, c.Descricao, c.Status, c.DataCriacao
                 FROM Chamados c
                 JOIN Usuarios u ON c.UsuarioId = u.Id
+                " + (apenasAbertos ? "WHERE c.Status = 'ABERTO'" : "") + @"
                 ORDER BY c.DataCriacao DESC";
 
                 var cmd = new MySqlCommand(sql, conn);
@@ -80,7 +79,7 @@ namespace TimeHelpDesk
                 return;
             }
 
-            string connStr = "server=localhost;user=root;password=123;database=helpdesk;";
+            string connStr = "server=localhost;user=root;password=ACE$777;database=helpdesk;";
 
             using (var conn = new MySqlConnection(connStr))
             {
@@ -133,7 +132,7 @@ namespace TimeHelpDesk
             }
 
             // Aqui você precisa do ID (vamos melhorar isso depois)
-            string connStr = "server=localhost;user=root;password=123;database=helpdesk;";
+            string connStr = "server=localhost;user=root;password=ACE$777;database=helpdesk;";
 
             using (var conn = new MySqlConnection(connStr))
             {
@@ -142,46 +141,29 @@ namespace TimeHelpDesk
                 string sql = "UPDATE Chamados SET Status = 'RESOLVIDO', DataFechamento = NOW() WHERE Id = @id";
 
                 var cmd = new MySqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@id", /* ID do chamado */);
+                Chamado selecionado = (Chamado)lstChamados.SelectedItem;
+                cmd.Parameters.AddWithValue("@id", selecionado.Id);
 
                 cmd.ExecuteNonQuery();
             }
 
             CarregarChamados();
         }
-        void SalvarChamados()
-        {
-            System.IO.File.WriteAllLines("chamados.txt", chamados);
-        }
-
         private void btnMostrarAbertos_Click(object sender, EventArgs e)
         {
             mostrandoAbertos = !mostrandoAbertos;
-            lstChamados.Items.Clear();
+
+            CarregarChamados(mostrandoAbertos);
+
             if (mostrandoAbertos)
-            {
-                foreach (var chamado in chamados)
-                {
-                    if (chamado.Contains("[ABERTO]"))
-                    {
-                        lstChamados.Items.Add(chamado);
-                    }
-                }
                 btnMostrarAbertos.Text = "Mostrar Todos";
-            }
             else
-            {
-                foreach (var chamado in chamados) 
-                {
-                    lstChamados.Items.Add(chamado);
-                }
                 btnMostrarAbertos.Text = "Mostrar Abertos";
-            }
         }
 
         private void lstChamados_SelectedIndexChanged(object sender, EventArgs e)
         {
-            lstChamados.Items.Add(chamados);
+            
         }
     }
 }
