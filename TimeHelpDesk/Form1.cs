@@ -14,10 +14,13 @@ namespace TimeHelpDesk
 {
     public partial class Form1 : Form
     {
+        int usuarioId = UsuarioLogado.Id;
         bool mostrandoAbertos = false;
         public Form1()
         {
             InitializeComponent();
+
+            lblUsuarioLogado.Text = "Usuário: " + UsuarioLogado.Nome;
 
             // garante foco inicial (opcional manter comentado se quiser)
             // this.BeginInvoke(new Action(() => txtUsuario.Focus()));
@@ -73,7 +76,7 @@ namespace TimeHelpDesk
         }
         private void btnAbrir_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtDescricao.Text) || string.IsNullOrWhiteSpace(txtUsuario.Text))
+            if (string.IsNullOrWhiteSpace(txtDescricao.Text))
             {
                 MessageBox.Show("Preencha usuário e descrição.");
                 return;
@@ -84,27 +87,6 @@ namespace TimeHelpDesk
             using (var conn = new MySqlConnection(connStr))
             {
                 conn.Open();
-
-                // 🔹 Primeiro pega ou cria usuário
-                string getUser = "SELECT Id FROM Usuarios WHERE Nome = @nome";
-                var cmdUser = new MySqlCommand(getUser, conn);
-                cmdUser.Parameters.AddWithValue("@nome", txtUsuario.Text);
-
-                object result = cmdUser.ExecuteScalar();
-                int usuarioId;
-
-                if (result == null)
-                {
-                    string insertUser = "INSERT INTO Usuarios (Nome) VALUES (@nome); SELECT LAST_INSERT_ID();";
-                    var cmdInsert = new MySqlCommand(insertUser, conn);
-                    cmdInsert.Parameters.AddWithValue("@nome", txtUsuario.Text);
-
-                    usuarioId = Convert.ToInt32(cmdInsert.ExecuteScalar());
-                }
-                else
-                {
-                    usuarioId = Convert.ToInt32(result);
-                }
 
                 // 🔹 Inserir chamado
                 string insertChamado = @"INSERT INTO Chamados 
@@ -119,7 +101,6 @@ namespace TimeHelpDesk
             }
 
             txtDescricao.Clear();
-            txtUsuario.Clear();
 
             CarregarChamados();
         }
@@ -164,6 +145,11 @@ namespace TimeHelpDesk
         private void lstChamados_SelectedIndexChanged(object sender, EventArgs e)
         {
             
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
