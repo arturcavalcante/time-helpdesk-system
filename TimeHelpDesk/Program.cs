@@ -16,11 +16,19 @@ namespace TimeHelpDesk
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            FormLogin login = new FormLogin();
 
-            if (login.ShowDialog() == DialogResult.OK)
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            while (true)
             {
-                Application.Run(new Form1());
+                FormLogin login = new FormLogin();
+
+                if (login.ShowDialog() != DialogResult.OK)
+                    break; // fecha o app se cancelar login
+
+                Form1 principal = new Form1();
+                Application.Run(principal);
             }
         }
     }

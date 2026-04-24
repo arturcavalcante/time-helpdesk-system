@@ -70,7 +70,14 @@ namespace TimeHelpDesk
                         DataCriacao = Convert.ToDateTime(reader["DataCriacao"])
                     };
 
-                    lstChamados.Items.Add(c); // 🔥 objeto, não string
+                    var listItem = new ListViewItem(c.DataCriacao.ToString("dd/MM HH:mm"));
+                    listItem.SubItems.Add(c.Status);
+                    listItem.SubItems.Add(c.Usuario);
+                    listItem.SubItems.Add(c.Descricao);
+
+                    listItem.Tag = c;
+
+                    lstChamados.Items.Add(listItem);
                 }
             }
         }
@@ -106,23 +113,26 @@ namespace TimeHelpDesk
         }
         private void btnResolver_Click(object sender, EventArgs e)
         {
-            if (lstChamados.SelectedItem == null)
+            if (lstChamados.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Selecione um chamado.");
                 return;
             }
 
-            // Aqui você precisa do ID (vamos melhorar isso depois)
+            var selectedItem = lstChamados.SelectedItems[0];
+            Chamado selecionado = (Chamado)selectedItem.Tag;
+
             string connStr = "server=localhost;user=root;password=ACE$777;database=helpdesk;";
 
             using (var conn = new MySqlConnection(connStr))
             {
                 conn.Open();
 
-                string sql = "UPDATE Chamados SET Status = 'RESOLVIDO', DataFechamento = NOW() WHERE Id = @id";
+                string sql = @"UPDATE Chamados 
+                       SET Status = 'RESOLVIDO', DataFechamento = NOW() 
+                       WHERE Id = @id";
 
                 var cmd = new MySqlCommand(sql, conn);
-                Chamado selecionado = (Chamado)lstChamados.SelectedItem;
                 cmd.Parameters.AddWithValue("@id", selecionado.Id);
 
                 cmd.ExecuteNonQuery();
@@ -148,6 +158,19 @@ namespace TimeHelpDesk
         }
 
         private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            UsuarioLogado.Id = 0;
+            UsuarioLogado.Nome = null;
+
+            this.Close();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
         {
 
         }
