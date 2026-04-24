@@ -1,34 +1,26 @@
 # Time HelpDesk
 
-Sistema de help desk desenvolvido em C# com Windows Forms para gerenciamento de chamados internos.
+Sistema de help desk desenvolvido em C# com Windows Forms para gerenciamento de chamados de TI internos.
 
 ## Funcionalidades
 
-- Criar chamados com usuário e descrição
-- Exibir lista de chamados
-- Marcar chamados como resolvidos
-- Filtro para mostrar apenas chamados abertos
-- Salvamento em arquivo local
+- Criar e resolver chamados
+- Criação e login de usuário
+- Exibir lista de chamados e filtragem da lista
+- Atualização de status de chamados
+- Acessar e salvar informações em banco de dados
 
 ## Tecnologias
 
 - C#
 - .NET Framework
 - Windows Forms
+- MySQL e MySQL.Data
 
 ## Objetivo
 
 Projeto desenvolvido para aprendizado prático de desenvolvimento de sistemas, organização de tarefas e lógica de programação.
 
-## Como usar
-
-1. Abra o programa
-2. Digite o usuário e a descrição
-3. Clique em "Abrir Chamado"
-4. Selecione um chamado e clique em "Resolver" para finalizar
-
 ## Melhorias futuras
 
-- Integração com banco de dados
-- Sistema de login
 - Versão web (Blazor/MudBlazor)
